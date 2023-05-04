@@ -113,18 +113,30 @@ def heston_helpers(spot, df_option, dtTrade, df_rates):
         days = int(365 * row['TTM'])
         maturity = Period(days, Days)
 
-        options.append(HestonModelHelper(
-            maturity, calendar, spot.value,
-            strike, SimpleQuote(row['IVBid']),
-            risk_free_ts, dividend_ts,
-            ImpliedVolError))
-
-        options.append(HestonModelHelper(
-            maturity, calendar, spot.value,
-            strike, SimpleQuote(row['IVAsk']),
-            risk_free_ts, dividend_ts,
-            ImpliedVolError))
-
+        options.extend(
+            (
+                HestonModelHelper(
+                    maturity,
+                    calendar,
+                    spot.value,
+                    strike,
+                    SimpleQuote(row['IVBid']),
+                    risk_free_ts,
+                    dividend_ts,
+                    ImpliedVolError,
+                ),
+                HestonModelHelper(
+                    maturity,
+                    calendar,
+                    spot.value,
+                    strike,
+                    SimpleQuote(row['IVAsk']),
+                    risk_free_ts,
+                    dividend_ts,
+                    ImpliedVolError,
+                ),
+            )
+        )
     return {'options': options, 'spot': spot}
 
 # The function merge_df merges the result of the calibration
@@ -234,8 +246,11 @@ def heston_calibration(df_option, ival=None):
           (model.v0, model.kappa, model.theta, model.sigma,
            model.rho))
 
-    calib_error = (1.0 / len(options)) * sum(
-        [pow(o.calibration_error() * 100.0, 2) for o in options])
+    calib_error = (
+        1.0
+        / len(options)
+        * sum(pow(o.calibration_error() * 100.0, 2) for o in options)
+    )
 
     print('SSE: %f' % calib_error)
 
@@ -256,9 +271,9 @@ def bates_calibration(df_option, ival=None):
     spot = tmp['spot']
     options = tmp['options']
 
-    v0 = .02
-
     if ival is None:
+        v0 = .02
+
         ival = {'v0': v0, 'kappa': 3.7, 'theta': v0,
         'sigma': 1.0, 'rho': -.6, 'lambda': .1,
         'nu': -.5, 'delta': 0.3}
@@ -285,8 +300,11 @@ def bates_calibration(df_option, ival=None):
           (model.v0, model.kappa, model.theta, model.sigma,
            model.rho, model.Lambda, model.nu, model.delta))
 
-    calib_error = (1.0 / len(options)) * sum(
-        [pow(o.calibration_error(), 2) for o in options])
+    calib_error = (
+        1.0
+        / len(options)
+        * sum(pow(o.calibration_error(), 2) for o in options)
+    )
 
     print('SSE: %f' % calib_error)
 
@@ -301,9 +319,9 @@ def batesdetjump_calibration(df_option, ival=None):
     spot = tmp['spot']
     options = tmp['options']
 
-    v0 = .02
-
     if ival is None:
+        v0 = .02
+
         ival = {'v0': v0, 'kappa': 3.7, 'theta': v0,
         'sigma': 1.0, 'rho': -.6, 'lambda': .1,
         'nu': -.5, 'delta': 0.3}
@@ -331,8 +349,11 @@ def batesdetjump_calibration(df_option, ival=None):
            model.rho, model.Lambda, model.nu, model.delta,
            model.kappaLambda, model.thetaLambda))
 
-    calib_error = (1.0 / len(options)) * sum(
-        [pow(o.calibration_error(), 2) for o in options])
+    calib_error = (
+        1.0
+        / len(options)
+        * sum(pow(o.calibration_error(), 2) for o in options)
+    )
 
     print('SSE: %f' % calib_error)
 
@@ -347,9 +368,9 @@ def batesdoubleexp_calibration(df_option, ival=None):
     spot = tmp['spot']
     options = tmp['options']
 
-    v0 = .02
-
     if ival is None:
+        v0 = .02
+
         ival = {'v0': v0, 'kappa': 3.7, 'theta': v0,
         'sigma': 1.0, 'rho': -.6, 'lambda': .1,
         'nu': -.5, 'delta': 0.3}
@@ -376,8 +397,11 @@ def batesdoubleexp_calibration(df_option, ival=None):
            model.rho, model.Lambda, model.nuUp, model.nuDown,
            model.p))
 
-    calib_error = (1.0 / len(options)) * sum(
-        [pow(o.calibration_error(), 2) for o in options])
+    calib_error = (
+        1.0
+        / len(options)
+        * sum(pow(o.calibration_error(), 2) for o in options)
+    )
 
     print('SSE: %f' % calib_error)
 
@@ -407,13 +431,13 @@ def calibration_subplot(ax, group, i, model_name):
         ax.set_xlabel('Strike')
     if i == 0:
         ax.set_ylabel('Implied Vol')
-    ax.text(.6, .8, '%s' % dtExpiry, transform=ax.transAxes)
+    ax.text(.6, .8, f'{dtExpiry}', transform=ax.transAxes)
 
 
 def calibration_plot(df_calibration, model_name):
 
     dtTrade = df_calibration['dtTrade'][0]
-    title = '%s Model (%s)' % (model_name, dtTrade)
+    title = f'{model_name} Model ({dtTrade})'
 
     df_calibration = DataFrame.filter(df_calibration,
                     items=['dtExpiry', 
@@ -423,7 +447,7 @@ def calibration_plot(df_calibration, model_name):
     # group by maturity
     grouped = df_calibration.groupby('dtExpiry')
 
-    all_groups = [(dt, g) for dt, g in grouped]
+    all_groups = list(grouped)
 
     xy = [(0, 0), (0, 1), (1, 0), (1, 1)]
 

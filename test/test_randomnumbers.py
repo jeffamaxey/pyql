@@ -10,10 +10,8 @@ class SobolRsgTestCase(unittest.TestCase):
         g1 = SobolRsg(10)
         g2 = SobolRsg(10)
         g2.skip_to(1000)
-        i = 0
-        while i <= 1000:
+        for _ in range(1001):
             s = next(g1)
-            i += 1
         self.assertEqual(s, next(g2))
 
     def test_direction_integers(self):

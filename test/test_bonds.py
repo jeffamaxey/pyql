@@ -85,11 +85,11 @@ class BondTestCase(unittest.TestCase):
 
         bond = FixedRateBond(
             settlement_days,
-		    face_amount,
-		    fixed_bond_schedule,
-		    [coupon_rate],
+        face_amount,
+        fixed_bond_schedule,
+        [coupon_rate],
             ActualActual(Bond),
-		    Unadjusted,
+        Unadjusted,
             redemption,
             issue_date
         )
@@ -109,9 +109,9 @@ class BondTestCase(unittest.TestCase):
 
 
         print(settings.evaluation_date)
-        print('Principal: {}'.format(face_amount))
-        print('Issuing date: {} '.format(bond.issue_date))
-        print('Maturity: {}'.format(bond.maturity_date))
+        print(f'Principal: {face_amount}')
+        print(f'Issuing date: {bond.issue_date} ')
+        print(f'Maturity: {bond.maturity_date}')
         print('Coupon rate: {:.4%}'.format(coupon_rate))
         print('Yield: {:.4%}'.format(bond_yield))
         print('Net present value: {:.4f}'.format(bond.net_present_value))

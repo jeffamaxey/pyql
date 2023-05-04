@@ -138,18 +138,11 @@ class VarianceSwapTestCase(unittest.TestCase):
         """ test mc variance engine vs expected result
         """
 
-        vols = []
-        dates = []
-
         interm_date = self.today + int(0.1*365+0.5)
         exercise = EuropeanExercise(self.ex_date)
 
-        dates.append(interm_date)
-        dates.append(self.ex_date)
-
-        vols.append(0.1)
-        vols.append(self.values['v'])
-
+        dates = [interm_date, self.ex_date]
+        vols = [0.1, self.values['v']]
         # Exercising code using BlackVarianceCurve because BlackVarianceSurface
         # is unreliable. Result should be v*v for arbitrary t1 and v1
         # (as long as 0<=t1<t and 0<=v1<v)

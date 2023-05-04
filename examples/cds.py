@@ -147,22 +147,22 @@ def example01():
     cds_2y.set_pricing_engine(engine);
 
     print("Repricing of quoted CDSs employed for calibration: ")
-    print("3M fair spread: {}".format(cds_3m.fair_spread))
+    print(f"3M fair spread: {cds_3m.fair_spread}")
     print("   NPV:         ", cds_3m.net_present_value)
     print("   default leg: ", cds_3m.default_leg_npv)
     print("   coupon leg:  ", cds_3m.coupon_leg_npv)
 
-    print("6M fair spread: {}".format(cds_6m.fair_spread))
+    print(f"6M fair spread: {cds_6m.fair_spread}")
     print("   NPV:         ", cds_6m.net_present_value)
     print("   default leg: ", cds_6m.default_leg_npv)
     print("   coupon leg:  ", cds_6m.coupon_leg_npv)
 
-    print("1Y fair spread: {}".format(cds_1y.fair_spread))
+    print(f"1Y fair spread: {cds_1y.fair_spread}")
     print("   NPV:         ", cds_1y.net_present_value)
     print("   default leg: ", cds_1y.default_leg_npv)
     print("   coupon leg:  ", cds_1y.coupon_leg_npv)
 
-    print("2Y fair spread: {}".format(cds_2y.fair_spread))
+    print(f"2Y fair spread: {cds_2y.fair_spread}")
     print("   NPV:         ", cds_2y.net_present_value)
     print("   default leg: ", cds_2y.default_leg_npv)
     print("   coupon leg:  ", cds_2y.coupon_leg_npv)

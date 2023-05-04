@@ -12,4 +12,7 @@ if sys.platform == 'win32':
     except (ImportError, IOError):
         # If the resource couldn't be found or if pkg_resources doesn't exist set the PATH
         # to include this folder.
-        os.environ["PATH"] = os.path.abspath(os.path.dirname(__file__)) + ";" + os.environ["PATH"]
+        os.environ["PATH"] = (
+            f"{os.path.abspath(os.path.dirname(__file__))};"
+            + os.environ["PATH"]
+        )

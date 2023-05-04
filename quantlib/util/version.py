@@ -4,10 +4,7 @@ from quantlib.settings import Settings
 
 
 def _to_int(s):
-    if s is None:
-        return None
-    else:
-        return int(s)
+    return None if s is None else int(s)
 
 
 def parse_ql_version_string(version):
@@ -28,7 +25,7 @@ def parse_ql_version_string(version):
     """
     m = re.match("^(\d+)\.(\d+)(?:\.(\d+))?(?:-(\w+))?$", version)
     if m is None:
-        raise ValueError("Invalid QuantLib version string: {}".format(version))
+        raise ValueError(f"Invalid QuantLib version string: {version}")
     major, minor, patch = [_to_int(field) for field in m.groups()[:3]]
     release = m.groups()[3]
     return major, minor, patch, release

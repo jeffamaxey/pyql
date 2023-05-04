@@ -64,10 +64,7 @@ def main():
     def report(method, x, dx=None):
         e = '%.4f' % abs(x - refValue)
         x = '%.5f' % x
-        if dx:
-            dx = '%.4f' % dx
-        else:
-            dx = 'n/a'
+        dx = '%.4f' % dx if dx else 'n/a'
         print('%19s' % method + ' |' +
               ' |'.join(['%17s' % y for y in [x, dx, e]]))
 
@@ -99,31 +96,6 @@ def main():
     print('Some pricing engines are not yet interfaced.')
 
     return
-
-    option.set_pricing_engine(BjerksundStenslandEngine(process))
-    report('Bjerksund-Stensland', option.NPV())
-
-    # method: binomial
-    timeSteps = 801
-
-    option.setPricingEngine(BinomialVanillaEngine(process, 'jr', timeSteps))
-    report('binomial (JR)', option.NPV())
-
-    option.setPricingEngine(BinomialVanillaEngine(process, 'crr', timeSteps))
-    report('binomial (CRR)', option.NPV())
-
-    option.setPricingEngine(BinomialVanillaEngine(process, 'eqp', timeSteps))
-    report('binomial (EQP)', option.NPV())
-
-    option.setPricingEngine(BinomialVanillaEngine(
-        process, 'trigeorgis', timeSteps))
-    report('bin. (Trigeorgis)', option.NPV())
-
-    option.setPricingEngine(BinomialVanillaEngine(process, 'tian', timeSteps))
-    report('binomial (Tian)', option.NPV())
-
-    option.setPricingEngine(BinomialVanillaEngine(process, 'lr', timeSteps))
-    report('binomial (LR)', option.NPV())
 
 if __name__ == '__main__':
     main()

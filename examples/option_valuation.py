@@ -88,13 +88,13 @@ def dividendOption():
 
     # We suppose the vol constant : his term structure is flat --> BlackConstantVol object
     flatVolTS = BlackConstantVol(settlementDate, calendar, underlying_vol, dayCounter)
-    
+
     # ++++++++++++++++++++ Description of Yield Term Structure
-    
+
     #  Libor data record 
     print("**********************************")
     print("Description of the Libor used for the Yield Curve construction") 
-    
+
     Libor_dayCounter = Actual360();
 
     liborRates = []
@@ -105,7 +105,7 @@ def dividendOption():
     liborRates = [ 0.002763, 0.004082, 0.005601, 0.006390, 0.007125, 0.007928, 0.009446, 
             0.01110]
     liborRatesTenor = [Period(tenor, Months) for tenor in [1,2,3,4,5,6,9,12]]
-    
+
     for tenor, rate in zip(liborRatesTenor, liborRates):
         print(tenor, "\t\t\t", rate)
 
@@ -134,13 +134,13 @@ def dividendOption():
     swapRates = [0.005681, 0.006970, 0.009310, 0.012010, 0.014628, 0.016881, 0.018745,
                  0.020260, 0.021545]
     swapRatesTenor = [Period(i, Years) for i in range(2, 11)]
-    
+
     for tenor, rate in zip(swapRatesTenor, swapRates):
         print(tenor, "\t\t\t", rate)
-    
+
     # ++++++++++++++++++++ Creation of the vector of RateHelper (need for the Yield Curve construction)
-    # ++++++++++++++++++++ Libor 
-    LiborFamilyName = currency.name + "Libor"
+    # ++++++++++++++++++++ Libor
+    LiborFamilyName = f"{currency.name}Libor"
     instruments = []
     for rate, tenor in zip(liborRates, liborRatesTenor):
         # Index description ___ creation of a Libor index
@@ -150,7 +150,7 @@ def dividendOption():
         instruments.append(DepositRateHelper(rate, index=liborIndex))
 
     # +++++++++++++++++++++ Swap
-    SwapFamilyName = currency.name + "swapIndex";
+    SwapFamilyName = f"{currency.name}swapIndex";
     for tenor, rate in zip(swapRatesTenor, swapRates):
         # swap description ___ creation of a swap index. The floating leg is described in the index 'Swap_iborIndex'
         swapIndex = SwapIndex (SwapFamilyName, tenor, settlement_days, currency, calendar,
@@ -158,7 +158,7 @@ def dividendOption():
                 Swap_iborIndex)
         # Initialize rate helper __ the SwapRateHelper links the swap index width his rate
         instruments.append(SwapRateHelper.from_index(rate, swapIndex))
-    
+
     # ++++++++++++++++++  Now the creation of the yield curve
 
     riskFreeTS = PiecewiseYieldCurve.from_reference_date(BootstrapTrait.ZeroYield,
@@ -175,7 +175,7 @@ def dividendOption():
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # ++++++++++++++++++++ Description of the option +++++++++++++++++++++++++++++++++++++++
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    
+
     Option_name = "IBM Option"
     maturity = Date(26, Jan, 2013)
     strike = 190
@@ -186,7 +186,7 @@ def dividendOption():
     # The emericanExercise need also the settlement date, as his right to exerce the buy or call start at the settlement date!
     #americanExercise = AmericanExercise(settlementDate, maturity)
     americanExercise = AmericanExercise(maturity, settlementDate)
-    
+
     print("**********************************")
     print("Description of the option:		", Option_name)
     print("Date of maturity:     			", maturity)
@@ -238,7 +238,7 @@ def dividendOption():
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # ++++++++++++++++++++ Description of the pricing  +++++++++++++++++++++++++++++++++++++
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    
+
     # For the european options we have a closed analytic formula: The Black Scholes:
     dividendEuropeanEngine = AnalyticDividendEuropeanEngine(bsProcess)
 
@@ -255,11 +255,11 @@ def dividendOption():
 
 
     # ++++++++++++++++++++ Valorisation ++++++++++++++++++++++++++++++++++++++++
-        
+
     # Link the pricing Engine to the option
     dividendEuropeanOption.set_pricing_engine(dividendEuropeanEngine)
     dividendAmericanOption.set_pricing_engine(dividendAmericanEngine)
-    
+
     # just	to test
     europeanOption.set_pricing_engine(europeanEngine)
     americanOption.set_pricing_engine(americanEngine)

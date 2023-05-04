@@ -142,7 +142,7 @@ if __name__ == '__main__':
     (dtMat, zc) = zero_curve(ts, dtObs[-1])
     dtMax = dtMat[-1]
 
-    print('dtMin %s dtMax %s' % (dtMin, dtMax))
+    print(f'dtMin {dtMin} dtMax {dtMax}')
 
     ax.set_xlim(dtMin, dtMax)
     ax.set_ylim(0.0, 0.1)
@@ -154,10 +154,10 @@ if __name__ == '__main__':
             (dtMat, zc) = zero_curve(ts, dt)
             ax.plot(dtMat, zc)
         except:
-            print('Error when computing ZC curve for %s' % dt)
+            print(f'Error when computing ZC curve for {dt}')
 
-    plt.title('Zero-coupon USD Libor from %s to %s' %
-              (dtI[0].strftime('%m/%d/%Y'),
-               dtI[-1].strftime('%m/%d/%Y')))
+    plt.title(
+        f"Zero-coupon USD Libor from {dtI[0].strftime('%m/%d/%Y')} to {dtI[-1].strftime('%m/%d/%Y')}"
+    )
 
     plt.show()

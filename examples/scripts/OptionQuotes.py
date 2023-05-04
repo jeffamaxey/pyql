@@ -124,7 +124,7 @@ from quantlib.pricingengines.blackformula import blackFormulaImpliedStdDev
 from quantlib.instruments.option import Call, Put
 
 def Compute_IV(optionDataFrame, tMin=0, nMin=0, QDMin=0, QDMax=1, keepOTMData=True):
-    
+
     """
     Pre-processing of a standard European option quote file.
     - Calculation of implied risk-free rate and dividend yield
@@ -142,12 +142,12 @@ def Compute_IV(optionDataFrame, tMin=0, nMin=0, QDMin=0, QDMax=1, keepOTMData=Tr
 
     isFirst = True
     for spec, group in grouped:
-        print('processing group %s' % spec)
+        print(f'processing group {spec}')
 
         # implied vol for this type/expiry group
 
         indx = group.index
-        
+
         dtTrade = group['dtTrade'][indx[0]]
         dtExpiry = group['dtExpiry'][indx[0]]
         spot = group['Spot'][indx[0]]
@@ -155,27 +155,27 @@ def Compute_IV(optionDataFrame, tMin=0, nMin=0, QDMin=0, QDMax=1, keepOTMData=Tr
         timeToMaturity = daysToExpiry/365.0
 
         # exclude groups with too short time to maturity
-        
+
         if timeToMaturity < tMin:
             continue
-            
+
         # exclude groups with too few data points
-        
+
         df_call = group[group['Type'] == 'C']
         df_put = group[group['Type'] == 'P']
-        
+
         if (len(df_call) < nMin) | (len(df_put) < nMin):
             continue
 
         # calculate forward, implied interest rate and implied div. yield
-            
+
         df_C = DataFrame((df_call['PBid']+df_call['PAsk'])/2,
                          columns=['PremiumC'])
         df_C.index = df_call['Strike']
         df_P = DataFrame((df_put['PBid']+df_put['PAsk'])/2,
                          columns=['PremiumP'])
         df_P.index = df_put['Strike']
-        
+
         # use 'inner' join because some strikes are not quoted for C and P
         df_all = df_C.join(df_P, how='inner')
         df_all['Strike'] = df_all.index
@@ -189,14 +189,14 @@ def Compute_IV(optionDataFrame, tMin=0, nMin=0, QDMin=0, QDMax=1, keepOTMData=Tr
         # intercept is last coef
         iRate = -np.log(-b[0])/timeToMaturity
         dRate = np.log(spot/b[1])/timeToMaturity
-        
+
         discountFactor = np.exp(-iRate*timeToMaturity)
         Fwd = spot * np.exp((iRate-dRate)*timeToMaturity)
 
         print('Fwd: %f int rate: %f div yield: %f' % (Fwd, iRate, dRate))
 
         # mid-market ATM volatility
-        
+
         def impvol(cp, strike, premium):
             try:
                 vol = blackFormulaImpliedStdDev(cp, strike,
@@ -236,19 +236,19 @@ def Compute_IV(optionDataFrame, tMin=0, nMin=0, QDMin=0, QDMax=1, keepOTMData=Tr
                          rv.cdf(np.log(Fwd/df_put.Strike.values)/(atmVol*np.sqrt(timeToMaturity)))))
 
         # keep data within QD range
-    
+
         df_call = df_call[(df_call['QuickDelta'] >= QDMin) & \
                           (df_call['QuickDelta'] <= QDMax) ]
-                        
+
         df_put = df_put[  (df_put['QuickDelta'] >= QDMin) & \
                           (df_put['QuickDelta'] <= QDMax) ]
 
         # final assembly...
 
         df_cp = df_call.append(df_put,  ignore_index=True)
-        df_cp['iRate'] = iRate 
-        df_cp['iDiv'] = dRate 
-        df_cp['ATMVol'] = atmVol 
+        df_cp['iRate'] = iRate
+        df_cp['iDiv'] = dRate
+        df_cp['ATMVol'] = atmVol
         df_cp['Fwd'] = Fwd
         df_cp['TTM'] = timeToMaturity
         df_cp['CP'] = [1 if t == 'C' else -1 for t in df_cp['Type']]
@@ -257,7 +257,7 @@ def Compute_IV(optionDataFrame, tMin=0, nMin=0, QDMin=0, QDMax=1, keepOTMData=Tr
         if keepOTMData:
             df_cp = df_cp[((df_cp['Strike']>=Fwd) & (df_cp['Type'] == 'C')) |
                           ((df_cp['Strike']<Fwd) & (df_cp['Type'] == 'P'))]
-                         
+
         if isFirst:
             df_final = df_cp
             isFirst = False 

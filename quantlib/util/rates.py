@@ -52,7 +52,7 @@ def _parse_rate_label(label):
             return (mo.group(1), int(mo.group(2)),
                     mo.group(3))
 
-    raise Exception("couldn't parse label: %s" % label)
+    raise Exception(f"couldn't parse label: {label}")
 
 
 def make_rate_helper(label, rate, dt_obs, currency='USD'):
@@ -81,7 +81,7 @@ def make_rate_helper(label, rate, dt_obs, currency='USD'):
     settlement_date = calendar.adjust(settlement_date)
     end_of_month = True
 
-    if((rate_type == 'SWAP') & (period == 'Y')):
+    if ((rate_type == 'SWAP') & (period == 'Y')):
         liborIndex = Libor(
             'USD Libor', Period(6, Months), settlement_days,
             USDCurrency(), calendar, Actual360()
@@ -103,7 +103,7 @@ def make_rate_helper(label, rate, dt_obs, currency='USD'):
                                    end_of_month,
                                    Actual360())
     else:
-        raise Exception("Rate type %s not supported" % label)
+        raise Exception(f"Rate type {label} not supported")
 
     return (helper)
 
@@ -124,11 +124,11 @@ def make_term_structure(rates, dt_obs):
 
     ts_day_counter = ActualActual(ISDA)
     tolerance = 1.0e-15
-    ts = PiecewiseYieldCurve[BootstrapTrait.Discount, LogLinear].from_reference_date(
+    return PiecewiseYieldCurve[
+        BootstrapTrait.Discount, LogLinear
+    ].from_reference_date(
         settlement_date, rate_helpers, ts_day_counter, accuracy=tolerance
     )
-
-    return ts
 
 
 def zero_rate(term_structure, days, dt_settlement, calendar=TARGET()):

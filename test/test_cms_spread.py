@@ -161,7 +161,7 @@ class CmsSpreadTestCase(unittest.TestCase):
             vol_shift = np.array([vol.shift(cpn1.fixing_date, cpn1.index.tenor),
                                   vol.shift(cpn2.fixing_date, cpn2.index.tenor),])
             avg = np.log((adj_rate + vol_shift) / (atm_rate + vol_shift)) - \
-                  0.5 * np.array([Cov[0,0], Cov[1,1]])
+                      0.5 * np.array([Cov[0,0], Cov[1,1]])
         else:
             avg = adj_rate
         g = LowDiscrepancy(2, 42)
@@ -173,8 +173,6 @@ class CmsSpreadTestCase(unittest.TestCase):
         if vol.volatility_type == VolatilityType.ShiftedLognormal:
             z = (atm_rate + vol_shift) * np.exp(z) - vol_shift
         return z[:,0] - z[:,1]
-        acc = np.clip(z[:,0] - z[:,1], floor, cap)
-        return acc.mean()
 
 if __name__ == '__main__':
     unittest.main()

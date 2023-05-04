@@ -318,8 +318,8 @@ class HybridHestonHullWhiteProcessTestCase(unittest.TestCase):
                     exercise = EuropeanExercise(maturity_date)
 
                     fwd = strike * s0.value * \
-                        q_ts.discount(maturity_date) / \
-                        r_ts.discount(maturity_date)
+                            q_ts.discount(maturity_date) / \
+                            r_ts.discount(maturity_date)
 
                     payoff = PlainVanillaPayoff(option_type, fwd)
 
@@ -337,7 +337,7 @@ class HybridHestonHullWhiteProcessTestCase(unittest.TestCase):
                         print("Failed to reproduce npv")
                         print("strike    : %f" % strike)
                         print("maturity  : %d" % maturity)
-                        print("type      : %s" % option_type.name)
+                        print(f"type      : {option_type.name}")
 
                     self.assertAlmostEqual(expected, calculated,
                                             delta=tol)

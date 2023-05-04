@@ -2,6 +2,7 @@
 
 Warning: this is work in progress and currently not working.
 """
+
 from __future__ import print_function
 from quantlib.indexes.api import Euribor6M
 from quantlib.instruments.swap import VanillaSwap, Payer
@@ -56,9 +57,9 @@ swaps = { (2,Years): 0.037125,
 #    deposits[(n,unit)] = SimpleQuote(deposits[(n,unit)])
 for n,m in FRAs.keys():
     FRAs[(n,m)] = SimpleQuote(FRAs[(n,m)])
-for d in futures.keys():
+for d in futures:
     futures[d] = SimpleQuote(futures[d])
-for s in swaps.keys():
+for s in swaps:
     swaps[s] = SimpleQuote(swaps[s])
 #for n,unit in swaps.keys():
 #    swaps[(n,unit)] = SimpleQuote(swaps[(n,unit)])
@@ -83,11 +84,12 @@ fraHelpers = [ FraRateHelper(v,
 
 day_counter = Actual360()
 months = 3
-futuresHelpers = [ FuturesRateHelper(futures[d],
-                                     d, months,
-                                     calendar, ModifiedFollowing,
-                                     True, day_counter)
-                   for d in futures.keys() ]
+futuresHelpers = [
+    FuturesRateHelper(
+        futures[d], d, months, calendar, ModifiedFollowing, True, day_counter
+    )
+    for d in futures
+]
 
 settlementDays = 2
 fixedLegFrequency = Annual
@@ -218,12 +220,12 @@ def report(swap, name):
                     formatRate(swap.fair_rate,4)))
 
 print(dblrule)
-print("5-year market swap-rate = %s" % formatRate(swaps[(5,Years)]))
+print(f"5-year market swap-rate = {formatRate(swaps[5, Years])}")
 print(dblrule)
 
 # price on two different term structures
 
-print(tab + "5-years swap paying %s" % formatRate(fixedRate))
+print(f"{tab}5-years swap paying {formatRate(fixedRate)}")
 print(separator.join(headers))
 print(rule)
 
@@ -239,7 +241,7 @@ print(rule)
 
 # price the 1-year forward swap
 
-print(tab + "5-years, 1-year forward swap paying %s" % formatRate(fixedRate))
+print(f"{tab}5-years, 1-year forward swap paying {formatRate(fixedRate)}")
 print(rule)
 
 discountTermStructure.link_to(depoFuturesSwapCurve)
@@ -255,10 +257,10 @@ report(forward,'depo-FRA-swap')
 swaps[(5,Years)].value = 0.046
 
 print(dblrule)
-print("5-year market swap-rate = %s" % formatRate(swaps[(5,Years)]))
+print(f"5-year market swap-rate = {formatRate(swaps[5, Years])}")
 print(dblrule)
 
-print(tab + "5-years swap paying %s" % formatRate(fixedRate))
+print(f"{tab}5-years swap paying {formatRate(fixedRate)}")
 print(separator.join(headers))
 print(rule)
 
@@ -272,7 +274,7 @@ report(spot,'depo-FRA-swap')
 
 print(rule)
 
-print(tab + "5-years, 1-year forward swap paying %s" % formatRate(fixedRate))
+print(f"{tab}5-years, 1-year forward swap paying {formatRate(fixedRate)}")
 print(rule)
 
 discountTermStructure.link_to(depoFuturesSwapCurve)

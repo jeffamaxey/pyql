@@ -17,7 +17,7 @@ import numpy as np
 class SwaptionVolatilityCubeTestCase(unittest.TestCase):
     def setUp(self):
         atm_option_tenors = [Period(1, Months), Period(6, Months)] + \
-                            [Period(i, Years) for i in [1, 5, 10, 30]]
+                                [Period(i, Years) for i in [1, 5, 10, 30]]
         atm_swap_tenors = [Period(1, Years), Period(5, Years),
                            Period(10, Years), Period(30, Years)]
 
@@ -45,6 +45,8 @@ class SwaptionVolatilityCubeTestCase(unittest.TestCase):
                                                          term_structure)
         self.vega_weighted_smile_fit = False
 
+
+
         class Cube:
             def __init__(self):
                 self.option_tenors = [Period(1, Years), Period(10, Years), Period(30, Years)]
@@ -59,16 +61,25 @@ class SwaptionVolatilityCubeTestCase(unittest.TestCase):
                                              [0.0437, 0.0059, 0.0000, -0.0030, -0.0006],
                                              [0.0533, 0.0078, 0.0000, -0.0045, -0.0046],
                                              [0.0545, 0.0079, 0.0000, -0.0042, -0.0020]])
-                self.vol_spreads_handle = []
-                for vs in self.vol_spreads:
-                    self.vol_spreads_handle.append([SimpleQuote(v) for v in vs])
+                self.vol_spreads_handle = [
+                    [SimpleQuote(v) for v in vs] for vs in self.vol_spreads
+                ]
+
+
         self.cube = Cube()
 
     def test_sabr_vols(self):
-        parameters_guess = []
-        for i in range(len(self.cube.option_tenors) * len(self.cube.swap_tenors)):
-            parameters_guess.append([SimpleQuote(0.2), SimpleQuote(0.5),
-                                     SimpleQuote(0.4), SimpleQuote(0.)])
+        parameters_guess = [
+            [
+                SimpleQuote(0.2),
+                SimpleQuote(0.5),
+                SimpleQuote(0.4),
+                SimpleQuote(0.0),
+            ]
+            for _ in range(
+                len(self.cube.option_tenors) * len(self.cube.swap_tenors)
+            )
+        ]
         is_parameter_fixed = [False] * 4
         vol_cube = SwaptionVolCube1(self.atm_vol_matrix,
                                     self.cube.option_tenors,
@@ -102,10 +113,17 @@ class SwaptionVolatilityCubeTestCase(unittest.TestCase):
                         spread, delta=12e-4)
 
     def test_spreaded_cube(self):
-        parameters_guess = []
-        for i in range(len(self.cube.option_tenors) * len(self.cube.swap_tenors)):
-            parameters_guess.append([SimpleQuote(0.2), SimpleQuote(0.5),
-                                     SimpleQuote(0.4), SimpleQuote(0.)])
+        parameters_guess = [
+            [
+                SimpleQuote(0.2),
+                SimpleQuote(0.5),
+                SimpleQuote(0.4),
+                SimpleQuote(0.0),
+            ]
+            for _ in range(
+                len(self.cube.option_tenors) * len(self.cube.swap_tenors)
+            )
+        ]
         is_parameter_fixed = [False] * 4
         spread = SimpleQuote(0.0001)
         vol_cube = SwaptionVolCube1(self.atm_vol_matrix,
@@ -130,10 +148,10 @@ class SwaptionVolatilityCubeTestCase(unittest.TestCase):
                                                   smile_section(t1, t2))
                 for k in strikes:
                     diff = spreaded_vol_cube.volatility(t1, t2, k) - \
-                           vol_cube.volatility(t1, t2, k)
+                               vol_cube.volatility(t1, t2, k)
                     self.assertAlmostEqual(diff, spread.value)
                     diff = smile_section_by_spreaded_cube.volatility(k) - \
-                           smile_section_by_cube.volatility(k)
+                               smile_section_by_cube.volatility(k)
 
                     self.assertAlmostEqual(diff, spread.value)
 
