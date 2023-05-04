@@ -87,9 +87,7 @@ def blsprice(spot, strike, risk_free_rate, time, volatility,
     args = locals()
     the_shape, shape = common_shape(args)
 
-    all_scalars = np.all([shape[key][0] == 'scalar' for key in shape])
-
-    if all_scalars:
+    if all_scalars := np.all([shape[key][0] == 'scalar' for key in shape]):
         res = _blsprice(**args)
     else:
         res = array_call(_blsprice, shape, args)
@@ -137,7 +135,7 @@ def _blsprice(spot, strike, risk_free_rate, time, volatility,
     elif calc == 'lambda':
         res = option.delta * spot / option.npv
     else:
-        raise ValueError('calc type %s is unknown' % calc)
+        raise ValueError(f'calc type {calc} is unknown')
 
     return res
 
@@ -148,14 +146,13 @@ def blsimpv(price, spot, strike, risk_free_rate, time,
     args = locals()
     the_shape, shape = common_shape(args)
 
-    all_scalars = np.all([shape[key][0] == 'scalar' for key in shape])
-
-    if all_scalars:
-        res = _blsimpv(**args)
-    else:
-        res = array_call(_blsimpv, shape, args)
-
-    return res
+    return (
+        _blsimpv(**args)
+        if (
+            all_scalars := np.all([shape[key][0] == 'scalar' for key in shape])
+        )
+        else array_call(_blsimpv, shape, args)
+    )
 
 
 def _blsimpv(price, spot, strike, risk_free_rate, time,
@@ -185,10 +182,6 @@ def _blsimpv(price, spot, strike, risk_free_rate, time,
     min_vol = 0.01
     max_vol = 2
 
-    vol = option.implied_volatility(price, process,
-            accuracy,
-            max_evaluations,
-            min_vol,
-            max_vol)
-
-    return vol
+    return option.implied_volatility(
+        price, process, accuracy, max_evaluations, min_vol, max_vol
+    )

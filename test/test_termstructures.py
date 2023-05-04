@@ -87,20 +87,16 @@ class FlatForwardTestCase(unittest.TestCase):
 
         quote.value = 0.03
 
-        expected = []
-        for days in [10, 30, 60, 120, 360, 720]:
-            expected.append(
-                term_structure.discount(self.adjusted_today + days)
-            )
-
+        expected = [
+            term_structure.discount(self.adjusted_today + days)
+            for days in [10, 30, 60, 120, 360, 720]
+        ]
         Settings().evaluation_date = self.adjusted_today + 30
 
-        calculated = []
-        for days in [10, 30, 60, 120, 360, 720]:
-            calculated.append(
-                term_structure.discount(self.adjusted_today+ 30 + days)
-            )
-
+        calculated = [
+            term_structure.discount(self.adjusted_today + 30 + days)
+            for days in [10, 30, 60, 120, 360, 720]
+        ]
         for i, val in enumerate(expected):
             self.assertAlmostEqual(val, calculated[i])
 

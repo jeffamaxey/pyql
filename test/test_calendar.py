@@ -23,10 +23,7 @@ from quantlib.util.version import QUANTLIB_VERSION
 # QuantLib 1.4 added one extra holiday to the 2011 UK calendar (29 April 2011,
 # the royal wedding), bringing the total to 9 holidays.
 major, minor = QUANTLIB_VERSION[:2]
-if major >= 1 and minor >= 4:
-    UK_HOLIDAYS_2011 = 9
-else:
-    UK_HOLIDAYS_2011 = 8
+UK_HOLIDAYS_2011 = 9 if major >= 1 and minor >= 4 else 8
 
 
 class TestQuantLibCalendar(unittest.TestCase):

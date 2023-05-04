@@ -84,7 +84,7 @@ class HestonModelTestCase(unittest.TestCase):
                         period=maturity)
                 )
                 forward_price = s0.value * dividend_ts.discount(tau) / \
-                                risk_free_ts.discount(tau)
+                                    risk_free_ts.discount(tau)
                 strike_price = forward_price * np.exp(
                     -moneyness * volatility * np.sqrt(tau)
                 )
@@ -95,12 +95,14 @@ class HestonModelTestCase(unittest.TestCase):
                     )
                 )
 
-        for sigma in np.arange(0.1, 0.7, 0.2):
-            v0    = 0.01
-            kappa = 0.2
-            theta = 0.02
-            rho   = -0.75
+        v0    = 0.01
+        kappa = 0.2
+        theta = 0.02
+        rho   = -0.75
 
+        tolerance = 3.0e-3
+
+        for sigma in np.arange(0.1, 0.7, 0.2):
             process = HestonProcess(
                 risk_free_ts, dividend_ts, s0, v0, kappa, theta, sigma, rho
             )
@@ -122,8 +124,6 @@ class HestonModelTestCase(unittest.TestCase):
 
             end_criteria = EndCriteria(400, 40, 1.0e-8, 1.0e-8, 1.0e-8)
             model.calibrate(options, optimisation_method, end_criteria)
-
-            tolerance = 3.0e-3
 
             self.assertFalse(model.sigma > tolerance)
 

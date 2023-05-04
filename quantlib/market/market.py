@@ -23,8 +23,7 @@ import quantlib.time.imm as imm
 
 
 def libor_market(market='USD(NY)', **kwargs):
-    m = IborMarket('USD Libor', market, **kwargs)
-    return m
+    return IborMarket('USD Libor', market, **kwargs)
 
 
 def next_imm_date(reference_date, tenor):
@@ -32,7 +31,7 @@ def next_imm_date(reference_date, tenor):
     Third Wednesday of contract month
     """
     dt = reference_date
-    for k in range(tenor):
+    for _ in range(tenor):
         dt = imm.next_date(dt)
     return pydate_from_qldate(dt)
 
@@ -97,7 +96,7 @@ def make_rate_helper(market, quote, reference_date=None):
             day_counter=DayCounter.from_name(
                 market._params.floating_leg_daycount))
     else:
-        raise Exception("Rate type %s not supported" % rate_type)
+        raise Exception(f"Rate type {rate_type} not supported")
 
     return helper
 
@@ -126,7 +125,7 @@ def make_eurobond_helper(
         )
 
     daycounter = DayCounter.from_name("Actual/Actual (Bond)")
-    helper = FixedRateBondHelper(
+    return FixedRateBondHelper(
         SimpleQuote(clean_price),
         market._params.settlement_days,
         100.0,
@@ -135,9 +134,8 @@ def make_eurobond_helper(
         daycounter,
         Following,  # Payment convention
         100.0,
-        issue_date)
-
-    return helper
+        issue_date,
+    )
 
 
 class Market:
@@ -172,7 +170,7 @@ class FixedIncomeMarket(Market):
     """
 
     def __str__(self):
-        return 'Fixed Income Market: %s' % self._name
+        return f'Fixed Income Market: {self._name}'
 
 class IborMarket(FixedIncomeMarket):
 
@@ -298,18 +296,17 @@ class IborMarket(FixedIncomeMarket):
         return 0
 
     def __str__(self):
-        output = \
-            "Ibor Market %s\n" % self._name + \
-            "Number of settlement days: %d\n" % self._params.settlement_days +\
-            "Fixed leg period: %s\n" % self._params.fixed_leg_period +\
-            "Fixed leg convention: %s\n" % self._params.fixed_leg_convention +\
-            "Fixed leg daycount: %s\n" % self._params.fixed_leg_daycount +\
-            "Term structure daycount: %s\n" % self._termstructure_daycount + \
-            "Floating rate index: %s\n" % self._floating_rate_index + \
-            "Deposit daycount: %s\n" % self._deposit_daycount + \
-            "Calendar: %s\n" % self._params.calendar
-
-        return output
+        return (
+            "Ibor Market %s\n" % self._name
+            + "Number of settlement days: %d\n" % self._params.settlement_days
+            + "Fixed leg period: %s\n" % self._params.fixed_leg_period
+            + "Fixed leg convention: %s\n" % self._params.fixed_leg_convention
+            + "Fixed leg daycount: %s\n" % self._params.fixed_leg_daycount
+            + "Term structure daycount: %s\n" % self._termstructure_daycount
+            + "Floating rate index: %s\n" % self._floating_rate_index
+            + "Deposit daycount: %s\n" % self._deposit_daycount
+            + "Calendar: %s\n" % self._params.calendar
+        )
 
     def bootstrap_term_structure(self, interpolator=LogLinear):
         tolerance = 1.0e-15

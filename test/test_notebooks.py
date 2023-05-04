@@ -29,7 +29,7 @@ def Compute_IV(optionDataFrame, tMin=0, nMin=0, QDMin=0, QDMax=1,
 
     isFirst = True
     for spec, group in grouped:
-        print('processing group %s' % spec)
+        print(f'processing group {spec}')
 
         # implied vol for this type/expiry group
 

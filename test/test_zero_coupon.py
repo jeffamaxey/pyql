@@ -38,8 +38,6 @@ def build_helpers():
                     [10, Years, 'Swap10Y', 5.22],
                     [30, Years, 'Swap30Y', 5.44]]
 
-        rate_helpers = []
-
         end_of_month = True
 
         for m, _, _, rate in depositData:
@@ -50,8 +48,7 @@ def build_helpers():
                                        end_of_month,
                                        Actual360())
 
-        rate_helpers.append(helper)
-
+        rate_helpers = [helper]
         liborIndex = Libor('USD Libor', Period(3, Months),
                            settlement_days,
                            USDCurrency(), calendar,
@@ -75,39 +72,41 @@ def build_helpers():
 class ZeroCouponTestCase(unittest.TestCase):
 
     def test_extrapolation(self):
-        rate_helpers = build_helpers()
-        settings = Settings()
+            rate_helpers = build_helpers()
+            settings = Settings()
 
-        calendar = TARGET()
+            calendar = TARGET()
 
-        # must be a business Days
-        dtObs = date(2007, 4, 27)
-        eval_date = calendar.adjust(pydate_to_qldate(dtObs))
-        settings.evaluation_date = eval_date
+            # must be a business Days
+            dtObs = date(2007, 4, 27)
+            eval_date = calendar.adjust(pydate_to_qldate(dtObs))
+            settings.evaluation_date = eval_date
 
-        settlement_days = 2
-        settlement_date = calendar.advance(eval_date, settlement_days, Days)
-        # must be a business day
-        settlement_date = calendar.adjust(settlement_date)
+            settlement_days = 2
+            settlement_date = calendar.advance(eval_date, settlement_days, Days)
+            # must be a business day
+            settlement_date = calendar.adjust(settlement_date)
 
-        print('dt Obs: %s\ndt Eval: %s\ndt Settle: %s' %
-              (dtObs, eval_date, settlement_date))
-        ts_day_counter = ActualActual(ISDA)
-        tolerance = 1.0e-2
+            print('dt Obs: %s\ndt Eval: %s\ndt Settle: %s' %
+                  (dtObs, eval_date, settlement_date))
+            ts_day_counter = ActualActual(ISDA)
+            tolerance = 1.0e-2
 
-        ts = PiecewiseYieldCurve[BootstrapTrait.Discount, LogLinear].from_reference_date(
-                                 settlement_date,
-                                 rate_helpers,
-                                 ts_day_counter,
-                                 accuracy=tolerance)
+            ts = PiecewiseYieldCurve[BootstrapTrait.Discount, LogLinear].from_reference_date(
+                                     settlement_date,
+                                     rate_helpers,
+                                     ts_day_counter,
+                                     accuracy=tolerance)
 
-        # max_date raises an exception without extrapolation...
-        self.assertFalse(ts.extrapolation)
-        with self.assertRaises(RuntimeError) as ctx:
-            ts.discount(ts.max_date + 1)
-        self.assertTrue(str(ctx.exception) in (
-            "time (30.011) is past max curve time (30.0082)",
-            "1st iteration: failed at 2nd alive instrument"))
+            # max_date raises an exception without extrapolation...
+            self.assertFalse(ts.extrapolation)
+            with self.assertRaises(RuntimeError) as ctx:
+                ts.discount(ts.max_date + 1)
+            self.assertTrue(
+                str(ctx.exception) in {
+                    "time (30.011) is past max curve time (30.0082)",
+                    "1st iteration: failed at 2nd alive instrument",
+                })
 
     def test_zero_curve(self):
         rate_helpers = build_helpers()

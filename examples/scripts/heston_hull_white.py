@@ -67,8 +67,8 @@ settings.evaluation_date = todays_date
 # constant yield and div curves
 
 dates = [todays_date + Period(i, Years) for i in range(3)]
-rates = [0.04 for i in range(3)]
-divRates = [0.03 for i in range(3)]
+rates = [0.04 for _ in range(3)]
+divRates = [0.03 for _ in range(3)]
 r_ts = ZeroCurve(dates, rates, dc)
 q_ts = ZeroCurve(dates, divRates, dc)
 
