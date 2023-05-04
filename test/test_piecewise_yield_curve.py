@@ -365,12 +365,12 @@ class PiecewiseYieldCurveTestCase(unittest.TestCase):
             UnitedStates(), Actual360()
         )
 
-        SwapFamilyName = currency.name + "swapIndex"
+        SwapFamilyName = f"{currency.name}swapIndex"
         instruments = []
 
         # ++++++++++++++++++++ Creation of the vector of RateHelper (need for the Yield Curve construction)
         # ++++++++++++++++++++ Libor
-        LiborFamilyName = currency.name + "Libor"
+        LiborFamilyName = f"{currency.name}Libor"
         instruments = []
         for rate, tenor in zip(liborRates, liborRatesTenor):
             # Index description ___ creation of a Libor index

@@ -70,9 +70,7 @@ def bndprice(bond_yield, coupon_rate, pricing_date, maturity_date,
         print(shape)
         print(values)
 
-    all_scalars = np.all([shape[key][0] == 'scalar' for key in shape])
-
-    if all_scalars:
+    if all_scalars := np.all([shape[key][0] == 'scalar' for key in shape]):
         price, ac = _bndprice(**args)
     else:
         res = array_call(_bndprice, shape, args)
@@ -184,9 +182,7 @@ def cfamounts(coupon_rate, pricing_date, maturity_date,
     args = locals()
     the_shape, shape  = common_shape(args)
 
-    all_scalars = np.all([shape[key][0] == 'scalar' for key in shape])
-
-    if all_scalars:
+    if all_scalars := np.all([shape[key][0] == 'scalar' for key in shape]):
         cf_a, cf_d = _cfamounts(**args)
     else:
         raise Exception('Only scalar inputs are handled')
@@ -245,6 +241,4 @@ def _cfamounts(coupon_rate, pricing_date, maturity_date,
                 redemption,
                 issue_date)
 
-    res = zip(*bond.cashflows)
-
-    return(res)
+    return zip(*bond.cashflows)

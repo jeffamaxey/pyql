@@ -94,18 +94,18 @@ def get_extra_compile_args():
 
 
 def get_extra_link_args():
-    if sys.platform == 'win32':
-        args = ['/subsystem:windows', '/machine:%s' % ("X64" if ARCH == "x64" else "I386")]
-        if DEBUG:
-            args.append('/DEBUG')
-    elif sys.platform == 'darwin':
+    if sys.platform == 'darwin':
         major, minor = [
             int(item) for item in platform.mac_ver()[0].split('.')[:2]]
-        if major == 10 and minor >= 9:
-            # On Mac OS 10.9 we link against the libstdc++ library.
-            args = ['-stdlib=libstdc++', '-mmacosx-version-min=10.6']
-        else:
-            args = []
+        args = (
+            ['-stdlib=libstdc++', '-mmacosx-version-min=10.6']
+            if major == 10 and minor >= 9
+            else []
+        )
+    elif sys.platform == 'win32':
+        args = ['/subsystem:windows', f'/machine:{"X64" if ARCH == "x64" else "I386"}']
+        if DEBUG:
+            args.append('/DEBUG')
     else:
         args = ['-Wl,--strip-all']
 
@@ -179,12 +179,11 @@ def collect_extensions():
 
     render_templates()
 
-    collected_extensions = cythonize(
-            manual_extensions +
-            [Extension('*', ['**/*.pyx'], **kwargs)],
-            compiler_directives=CYTHON_DIRECTIVES, nthreads = 4)
-
-    return collected_extensions
+    return cythonize(
+        manual_extensions + [Extension('*', ['**/*.pyx'], **kwargs)],
+        compiler_directives=CYTHON_DIRECTIVES,
+        nthreads=4,
+    )
 
 class pyql_build_ext(build_ext):
     """
@@ -225,15 +224,15 @@ class pyql_build_ext(build_ext):
                 else:
                     raise RuntimeError("Can't find cl.exe")
 
-                assert os.path.exists(redist_dir), "Can't find CRT redist dlls '%s'" % redist_dir
+                assert os.path.exists(redist_dir), f"Can't find CRT redist dlls '{redist_dir}'"
                 dlls.extend(glob.glob(os.path.join(redist_dir, "msvc*.dll")))
 
             for libdir in LIBRARY_DIRS:
-                if os.path.exists(os.path.join(libdir, QL_LIBRARY + ".dll")):
-                    dlls.append(os.path.join(libdir, QL_LIBRARY + ".dll"))
+                if os.path.exists(os.path.join(libdir, f"{QL_LIBRARY}.dll")):
+                    dlls.append(os.path.join(libdir, f"{QL_LIBRARY}.dll"))
                     break
             else:
-                raise AssertionError("%s.dll not found" % QL_LIBRARY)
+                raise AssertionError(f"{QL_LIBRARY}.dll not found")
 
             for dll in dlls:
                 self.copy_file(dll, os.path.join(self.build_lib, "quantlib", os.path.basename(dll)))

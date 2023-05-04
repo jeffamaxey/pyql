@@ -54,12 +54,10 @@ class SofrFuture(unittest.TestCase):
         index.add_fixing(Date(24, October, 2018), 0.0218)
         index.add_fixing(Date(25, October, 2018), 0.0219)
 
-        helpers = []
-        for freq, month, year, price, compounding in sofr_quotes:
-            helpers.append(
-                SofrFutureRateHelper(price, month, year, freq, index, 0.0, compounding)
-            )
-
+        helpers = [
+            SofrFutureRateHelper(price, month, year, freq, index, 0.0, compounding)
+            for freq, month, year, price, compounding in sofr_quotes
+        ]
         curve = PiecewiseYieldCurve[BootstrapTrait.Discount, Linear].from_reference_date(self.today, helpers, Actual365Fixed())
         sofr = Sofr(curve)
         sf = OvernightIndexFuture(sofr, Date(20, Mar, 2019), Date(19, Jun, 2019))

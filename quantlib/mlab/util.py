@@ -58,7 +58,7 @@ def array_call(foo, shape, values):
 
     nb_items = len(values[array_vars[0]])
 
-    input_args = dict((key, 0) for key in shape)
+    input_args = {key: 0 for key in shape}
 
     # fill scalar arguments once
     for key in scalar_vars:
@@ -66,7 +66,7 @@ def array_call(foo, shape, values):
 
     # iterate through elements of array arguments
     # output is a list because foo may return a list.
-    res = list()
+    res = []
     for i in range(nb_items):
         for key in array_vars:
             input_args[key] = values[key][i]

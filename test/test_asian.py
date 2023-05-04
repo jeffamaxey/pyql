@@ -26,12 +26,7 @@ import unittest
 from .utilities import flat_rate
 
 def relative_error(x1, x2, reference):
-    if reference:
-        result = abs(x1-x2)/reference
-    else:
-        # fall back to absolute error
-        result = abs(x1-x2)
-    return result
+    return abs(x1-x2)/reference if reference else abs(x1-x2)
 
 
 class AsianOptionTestCase(unittest.TestCase):
@@ -140,14 +135,13 @@ class AsianOptionTestCase(unittest.TestCase):
 
     def test_analytic_cont_geo_av_price_greeks(self):
         
-        tolerance = {}
-        tolerance["delta"]  = 1.0e-5
-        tolerance["gamma"]  = 1.0e-5
-        # tolerance["theta"]  = 1.0e-5
-        tolerance["rho"]    = 1.0e-5
-        tolerance["divRho"] = 1.0e-5
-        tolerance["vega"]   = 1.0e-5
-
+        tolerance = {
+            "delta": 1e-05,
+            "gamma": 1e-05,
+            "rho": 1e-05,
+            "divRho": 1e-05,
+            "vega": 1e-05,
+        }
         opt_types = [Call, Put]
         underlyings = [100.0]
         strikes = [90.0, 100.0, 110.0]
@@ -155,7 +149,7 @@ class AsianOptionTestCase(unittest.TestCase):
         r_rates = [0.01, 0.05, 0.15]
         lengths = [1, 2]
         vols = [0.11, 0.50, 1.20]
-       
+
         spot = SimpleQuote(0.0)
         q_rate = SimpleQuote(0.0)
         r_rate = SimpleQuote(0.0)
@@ -170,7 +164,7 @@ class AsianOptionTestCase(unittest.TestCase):
         calculated = {}
         expected = {}
         for opt_type, strike, length in product(opt_types, strikes, lengths):
-            
+
             maturity = EuropeanExercise(self.today + length*Years)
 
             payoff = PlainVanillaPayoff(opt_type, strike)
@@ -178,7 +172,7 @@ class AsianOptionTestCase(unittest.TestCase):
             engine = AnalyticContinuousGeometricAveragePriceAsianEngine(process)
 
             option = ContinuousAveragingAsianOption(Geometric, payoff, maturity)
-                
+
             option.set_pricing_engine(engine)
 
             for u, m, n, v in product(underlyings, q_rates, r_rates, vols):

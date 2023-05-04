@@ -146,7 +146,7 @@ class RateHelpersTestCase(unittest.TestCase):
         fixed_leg_tenor	= Period(12, Months)
         fixed_leg_convention = ModifiedFollowing
         fixed_leg_daycounter = Actual360()
-        family_name = currency.name + 'index'
+        family_name = f'{currency.name}index'
         ibor_index =  Libor(
             "USDLibor", Period(3,Months), settlement_days, USDCurrency(),
             UnitedStates(), Actual360()

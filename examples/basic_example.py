@@ -1,5 +1,6 @@
 """ Simple example pricing a European option 
 using a Black&Scholes Merton process."""
+
 from __future__ import print_function
 
 from quantlib.instruments.api import (EuropeanExercise, PlainVanillaPayoff, Put,
@@ -69,9 +70,7 @@ analytic_european_engine = AnalyticEuropeanEngine(black_scholes_merton_process)
 european_option.set_pricing_engine(analytic_european_engine)
 
 print(
-    'today: %s settlement: %s maturity: %s' % (
-        todays_date, settlement_date, maturity
-    )
+    f'today: {todays_date} settlement: {settlement_date} maturity: {maturity}'
 )
 print('NPV: %f\n' % european_option.net_present_value)
 

@@ -38,8 +38,7 @@ def get_frb_url(dtStart, dtEnd):
     Construct this URL at 'http://www.federalreserve.gov/datadownload
     """
 
-    url = 'http://www.federalreserve.gov/datadownload/Output.aspx?rel=H15&series=8f47c9df920bbb475f402efa44f35c29&lastObs=&from=%s&to=%s&filetype=csv&label=include&layout=seriescolumn' % (dtStart.strftime('%m/%d/%Y'), dtEnd.strftime('%m/%d/%Y'))
-    return url
+    return f"http://www.federalreserve.gov/datadownload/Output.aspx?rel=H15&series=8f47c9df920bbb475f402efa44f35c29&lastObs=&from={dtStart.strftime('%m/%d/%Y')}&to={dtEnd.strftime('%m/%d/%Y')}&filetype=csv&label=include&layout=seriescolumn"
 
 
 def dataconverter(s):
@@ -77,10 +76,8 @@ if __name__ == '__main__':
         frb_site = urllib.urlopen(url)
         text = frb_site.read().strip()
 
-        f = open(fname, 'w')
-        f.write(text)
-        f.close()
-
+        with open(fname, 'w') as f:
+            f.write(text)
     # simpler labels
     columns_dic = {"RIFLDIY01_N.B": 'Swap1Y',
                "RIFLDIY02_N.B": 'Swap2Y',

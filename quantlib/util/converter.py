@@ -71,7 +71,7 @@ def _partition_date(date):
             return (mo.group(idx[0]), mo.group(idx[1]),
                     mo.group(idx[2]))
 
-    raise Exception("couldn't partition date: %s" % date)
+    raise Exception(f"couldn't partition date: {date}")
 
 
 def _parsedate(date):
@@ -90,8 +90,8 @@ def _parsedate(date):
         mm = locale.atoi(mo)
     except:
         mo = str.lower(mo)
-        if not mo in _shortMonthName:
-            raise Exception("Bad month name: " + mo)
+        if mo not in _shortMonthName:
+            raise Exception(f"Bad month name: {mo}")
         else:
             mm = _shortMonthName.index(mo) + 1
 
@@ -106,9 +106,8 @@ def pydate(date):
 
     if isinstance(date, datetime.datetime):
         return date
-    else:
-        yy, mm, dd = _parsedate(date)
-        return datetime.datetime(yy, mm, dd)
+    yy, mm, dd = _parsedate(date)
+    return datetime.datetime(yy, mm, dd)
 
 
 def pydate_to_qldate(date):
@@ -119,11 +118,10 @@ def pydate_to_qldate(date):
 
     if isinstance(date, Date):
         return date
-    if isinstance(date, six.string_types):
-        yy, mm, dd = _parsedate(date)
-        return Date(dd, mm, yy)
-    else:
+    if not isinstance(date, six.string_types):
         return dt.qldate_from_pydate(date)
+    yy, mm, dd = _parsedate(date)
+    return Date(dd, mm, yy)
 
 
 def qldate_to_pydate(date):

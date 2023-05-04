@@ -41,16 +41,12 @@ data = [
 row = collections.namedtuple("row", labels[1:])
 
 def load():
-    _conventions = {}
-    for line in data:
-        _conventions[line[0]] = row(*line[1:])
-    return _conventions
+    return {line[0]: row(*line[1:]) for line in data}
 
 conventions = load()
 
 def help():
-    table = tabulate.tabulate(data, headers=labels_short)
-    return table
+    return tabulate.tabulate(data, headers=labels_short)
 
 def params(market):
     return conventions[market]

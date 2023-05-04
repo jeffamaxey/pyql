@@ -24,7 +24,7 @@ class ScheduleTestCase(unittest.TestCase):
 
         self.assertIsNotNone(schedule)
 
-        for date in schedule.dates():
+        for _ in schedule.dates():
             pass
 
         # Constructor using the defaults for the different conventions
@@ -64,7 +64,7 @@ class ScheduleMethodTestCase(unittest.TestCase):
     def test_iter_dates(self):
 
         expected_dates_length = self.schedule.size()
-        dates= [date for date in self.schedule]
+        dates = list(self.schedule)
 
         self.assertEqual(expected_dates_length, len(dates))
 
